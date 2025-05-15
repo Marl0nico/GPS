@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Ubicación</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Información del usuario</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+
+      <ion-input
+        label="Tu nombre"
+        placeholder="Escribe tu nombre"
+        [(ngModel)]="nombre"
+        type="text"
+      ></ion-input>
+
+      <ion-button expand="block" (click)="enableLocation()">Obtener ubicación</ion-button>
+      <ion-button expand="block" (click)="abrirEnGoogleMaps()">Ver en Google Maps</ion-button>
+      <ion-button expand="block" color="success" (click)="subirUbicacionAFirebase()">Subir ubicación</ion-button>
+      <ion-button expand="block" color="danger" (click)="disableLocation()">Desactivar ubicación</ion-button>
+
+      <div *ngIf="latitude && longitude">
+        <p>Latitud: {{ latitude }}</p>
+        <p>Longitud: {{ longitude }}</p>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+</ion-content>
