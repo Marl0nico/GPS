@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -37,13 +37,17 @@ import { Firestore, collection, addDoc } from '@angular/fire/firestore';
     IonInput,
   ],
 })
-export class HomePage {
+export class HomePage implements OnInit {
   nombre: string = '';
-  latitude: number | null = null;
-  longitude: number | null = null;
-  locationEnabled: boolean = false;
+  latitud: number | null = null;
+  longitud: number | null = null;
+  ubicacionActivada: boolean = false;
 
   constructor(private firestore: Firestore) {}
+  async ngOnInit() {
+    await Geolocation.requestPermissions();
+    this.getCurrentLocation();
+  }
 
   async getCurrentLocation() {
     try {
@@ -53,62 +57,62 @@ export class HomePage {
         maximumAge: 0,
       });
 
-      this.latitude = coordinates.coords.latitude;
-      this.longitude = coordinates.coords.longitude;
-      console.log('Latitude:', this.latitude);
-      console.log('Longitude:', this.longitude);
+      this.latitud = coordinates.coords.latitude;
+      this.longitud = coordinates.coords.longitude;
+      console.log('Latitud:', this.latitud);
+      console.log('Longitud:', this.longitud);
     } catch (error) {
-      console.error('Error getting location', error);
+      console.error('Error al obtener ubicación', error);
     }
   }
 
-  async enableLocation() {
-    this.locationEnabled = true;
+  async activarUbicacion() {
+    this.ubicacionActivada = true;
     await this.getCurrentLocation();
   }
 
-  disableLocation() {
-    this.locationEnabled = false;
-    this.latitude = null;
-    this.longitude = null;
+  desactivarUbicacion() {
+    this.ubicacionActivada = false;
+    this.latitud = null;
+    this.longitud = null;
   }
 
-  abrirEnGoogleMaps() {
-    if (this.latitude !== null && this.longitude !== null) {
-      const url = `https://www.google.com/maps?q=${this.latitude},${this.longitude}`;
+  abrirGoogle_Maps() {
+    if (this.latitud !== null && this.longitud !== null) {
+      const url = `https://www.google.com/maps?q=${this.latitud},${this.longitud}`;
       window.open(url, '_blank');
     } else {
       alert('Ubicación no disponible');
     }
   }
 
-  async subirUbicacionAFirebase() {
+  async enviarUbicacion_Firebase() {
     if (!this.nombre) {
-      alert('Por favor ingresa tu nombre.');
+      alert('Por favor ingresa tu nombre');
       return;
     }
 
-    if (this.latitude === null || this.longitude === null) {
+    if (this.latitud === null || this.longitud === null) {
       alert('Primero debes obtener tu ubicación.');
       return;
     }
 
-    const url = `https://www.google.com/maps?q=${this.latitude},${this.longitude}`;
+    const url = `https://www.google.com/maps?q=${this.latitud},${this.longitud}`;
 
     try {
       const ubicacionesRef = collection(this.firestore, 'ubicaciones');
       await addDoc(ubicacionesRef, {
         nombre: this.nombre,
-        latitud: this.latitude,
-        longitud: this.longitude,
+        latitud: this.latitud,
+        longitud: this.longitud,
         url: url,
         fecha: new Date(),
       });
-      alert('Ubicación subida correctamente a Firebase');
-      this.nombre = ''; // Limpiar nombre si se desea
+      alert('Ubicación subida correctamente a la base de datos en Firebase');
+      this.nombre = '';
     } catch (error) {
-      console.error('Error al subir ubicación a Firebase:', error);
-      alert('Error al subir ubicación');
+      console.error('Error al subir ubicación a la base de datos de Firebase:', error);
+      alert('Error al subir ubicación a la base de datos en Firebase');
     }
   }
 }
