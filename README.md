@@ -12,3 +12,6 @@ Un punto a tener en cuenta es que se debe configurar el archivo manifest de la a
 
 ![image](https://github.com/user-attachments/assets/1ba52e7a-86d7-4013-8d30-ea734b852c32)
 
+Y finalmente la visualización de la información enviada en la base de datos:
+
+![image](https://github.com/user-attachments/assets/0b4f4391-6500-4dff-8ad1-28e673ddb811)
